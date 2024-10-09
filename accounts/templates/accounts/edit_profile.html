@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <section class="ps-lg-4 pe-lg-3 pt-4">
+        <div class="container">
+            <div class="row">
+               
+                <!-- Modal -->
+                <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addressModalLabel">Add New Address</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addressForm" method="post">
+                                    <!-- CSRF token -->
+                                    {% csrf_token %}
+                                    <!-- Form fields -->
+                                    
+            
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6">
+                                            <label for="modal_first_name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="modal_first_name" name="first_name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="modal_last_name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="modal_last_name" name="last_name" required>
+                                        </div>
+                                    </div>
+            
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6">
+                                            <label for="modal_phone_number" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="modal_phone_number" name="phone_number" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="modal_city" class="form-label">City</label>
+                                            <input type="text" class="form-control" id="modal_city" name="city" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6">
+                                            <label for="modal_street_name" class="form-label">Street Name</label>
+                                            <input type="text" class="form-control" id="modal_street_name" name="street_name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="modal_address_line" class="form-label">Address Line</label>
+                                            <input type="text" class="form-control" id="modal_address_line" name="address_line" required>
+                                        </div>
+                                    </div>
+            
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6">
+                                            <label for="modal_state" class="form-label">State</label>
+                                            <input type="text" class="form-control" id="modal_state" name="state" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="modal_country" class="form-label">Country</label>
+                                            <input type="text" class="form-control" id="modal_country" name="country" required>
+                                        </div>
+                                    </div>
+            
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6">
+                                            <label for="modal_kilometer" class="form-label">Kilometer</label>
+                                            <input type="number" class="form-control" id="modal_kilometer" name="kilometer" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="modal_zip_code" class="form-label">Zip Code</label>
+                                            <input type="number" class="form-control" id="modal_zip_code" name="zip_code" required>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Submit button -->
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Load Bootstrap JS -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            
+                <!-- Include jQuery -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            
+                <!-- JavaScript code to handle form submission -->
+                <script>
+                    $(document).ready(function () {
+                        // Listen for form submission
+                        $('#addressForm').on('submit', function (event) {
+                            event.preventDefault(); // Prevent default form submission
+                
+                            // Collect form data
+                            const formData = new FormData(this);
+                            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                            // Make AJAX request
+                            fetch("{% url 'add_address' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': csrfToken,
+                                },
+                                body: formData,
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Success: redirect to the edit_profile page
+                                    window.location.href = "{% url 'edit_profile' %}";
+                                } else {
+                                    // Failure: display error messages
+                                    // Depending on the format of the data.errors object, display the error messages
+                                    let errorMessages = '';
+                                    for (const [key, value] of Object.entries(data.errors)) {
+                                        errorMessages += `${key}: ${value}\n`;
+                                    }
+                                    alert('Error: ' + errorMessages);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An unexpected error occurred. Please try again later.');
+                            });
+                        });
+                    });
+                </script>
+                
+                
+                {% include 'accounts/dashbord_sidebar.html' %}
+              
+
+                <main class="col-lg-9">
+                    <article class="card">
+                        <header class="card-body">
+                            <strong>Edit Your Profile</strong>
+                        </header>
+                        
+                            <div class="row p-3">
+                                <div class="col-md-12">
+                                    <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <!-- First Name and Last Name in one row -->
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_first_name" class="form-label">First Name</label>
+                                                {{ profile_form.first_name }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_last_name" class="form-label">Last Name</label>
+                                                {{ profile_form.last_name }}
+                                            </div>
+                                       
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_profile_pic" class="form-label">Profile Picture</label>
+                                                {{ profile_form.profile_pic }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_profile_pic" class="form-label">Email</label>
+                                                {{ profile_form.email }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_phone_number" class="form-label">Phone Number</label>
+                                                {{ profile_form.phone_number }}
+                                            </div>
+                                            <div class="mb-3 col-md-4 ">
+                                                <label for="id_profile_pic" class="form-label">Alter Number</label>
+                                                {{ profile_form.alter_number }}
+                                            </div>
+                                            <div class="mb-3 col-md-4 ">
+                                                <label for="id_profile_pic" class="form-label">Address line</label>
+                                                {{ profile_form.address_line }}
+                                            </div>
+                                            <div class="mb-3 col-md-4 ">
+                                                <label for="id_city" class="form-label">street name</label>
+                                                {{ profile_form.street_name }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_city" class="form-label">City</label>
+                                                {{ profile_form.city }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_state" class="form-label">State</label>
+                                                {{ profile_form.state }}
+                                            </div>
+                                            <div class="mb-3 col-md-4 ">
+                                                <label for="id_zip_code" class="form-label">ZIP Code</label>
+                                            {{ profile_form.zip_code }}
+                                            </div>
+                                            <div class="mb-3 col-md-4 ">
+                                                <label for="id_country" class="form-label">Country</label>
+                                                {{ profile_form.country }}
+                                            </div>
+                                            <div class="mb-3 col-md-4">
+                                                <label for="id_state" class="form-label">kilometer</label>
+                                                {{ profile_form.kilometer }}
+                                            </div>
+                                            
+                                            <div class="mb-3 col-md-4 mt-4">
+                                                <input type="submit" class="btn btn-primary" value="Save">  
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </main>
+            </div>
+        </div>
+    </section>
+
+
+
+        </script>
+
+    
+</main>
+{% endblock content %}

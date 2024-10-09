@@ -1,0 +1,595 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <li class="nav-item px-3 pb-2" role="presentation">
+        <a href="{% url 'cart' %}" ><i class="fa-solid fa-arrow-left"></i></a></i>
+    </li>
+    <section class="ps-lg-4 pe-lg-3">
+        <div class="container">
+            <div class="row">
+                
+
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="addressTabs" role="tablist">
+                                
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="billing-tab" data-bs-toggle="tab" data-bs-target="#billing" type="button" role="tab" aria-controls="billing" aria-selected="true">Billing Address</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="delivery" aria-selected="false">Delivery Address</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="addressTabsContent">
+                                <div class="tab-pane fade show active" id="billing" role="tabpanel" aria-labelledby="billing-tab">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            
+                                        <h4 class="card-title mb-4 col mb-3">Billing Address</h4>
+                                        
+                                        </div>
+                                  <!-- checkout.html -->
+                                  <form id="billing_form" action="{% url 'edit_billing_address' %}" method="POST">
+                                    {% csrf_token %}
+                                    
+                                    <!-- Dropdown for existing billing addresses -->
+                                    <div class="row">
+                                        <div class="mb-3 col-md-6">
+                                            <label for="billing_address_select" class="form-label">Select billing Address</label>
+                                            <select id="billing_address_select" class="form-select" onchange="onbillingAddressChange()">
+                                                <option value="">Choose an existing address</option>
+                                                {% for address in billing_addresses %}
+                                                    <option value="{{ address.id }}"
+                                                            data-first-name="{{ address.first_name }}"
+                                                            data-last-name="{{ address.last_name }}"
+                                                            data-phone-number="{{ address.phone_number }}"
+                                                            data-address-line="{{ address.address_line }}"
+                                                            data-street-name="{{ address.street_name }}"
+                                                            data-city="{{ address.city }}"
+                                                            data-state="{{ address.state }}"
+                                                            data-country="{{ address.country }}"
+                                                            data-zip-code="{{ address.zip_code }}"
+                                                            data-kilometer="{{ address.kilometer }}">
+                                                        {{ address.first_name }} {{ address.last_name }} - {{ address.address_line }}, {{ address.city }}, {{ address.state }}, {{ address.country }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col mt-4">              
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="billing_address_id" name="billing_address_id" value="">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="billing_first_name" class="form-label">First Name</label>
+                                            <input type="text" id="billing_first_name" name="first_name" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="billing_last_name" class="form-label">Last Name</label>
+                                            <input type="text" id="billing_last_name" name="last_name" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="billing_phone_number" class="form-label">Phone Number</label>
+                                            <input type="text" id="billing_phone_number" name="phone_number" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="billing_street_name" class="form-label">Street Name</label>
+                                            <input type="text" id="billing_street_name" name="street_name" class="form-control form-control-sm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="billing_address_line" class="form-label">Address Line</label>
+                                            <input type="text" id="billing_address_line" name="address_line" class="form-control form-control-sm" disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="billing_city" class="form-label">City</label>
+                                            <input type="text" id="billing_city" name="city" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="billing_kilometer" class="form-label">Kilometer</label>
+                                            <input type="number" id="billing_kilometer" name="kilometer" class="form-control form-control-sm" disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="billing_zip_code" class="form-label">Zip Code</label>
+                                            <input type="text" id="billing_zip_code" name="zip_code" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="billing_state" class="form-label">State</label>
+                                            <input type="text" id="billing_state" name="state" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="billing_country" class="form-label">Country</label>
+                                            <input type="text" id="billing_country" name="country" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mt-4">
+                                            <button type="submit" id="save_billing_button" class="btn btn-primary" style="display: none;">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <script>
+                                function onbillingAddressChange() {
+                                    const selectedOption = document.getElementById("billing_address_select").options[document.getElementById("billing_address_select").selectedIndex];
+                                    const billingAddressId = selectedOption.value;
+                                    if (billingAddressId) {
+                                        document.getElementById("billing_address_id").value = billingAddressId;
+                                        document.getElementById("billing_first_name").value = selectedOption.dataset.firstName;
+                                        document.getElementById("billing_last_name").value = selectedOption.dataset.lastName;
+                                        document.getElementById("billing_phone_number").value = selectedOption.dataset.phoneNumber;
+                                        document.getElementById("billing_address_line").value = selectedOption.dataset.addressLine;
+                                        document.getElementById("billing_street_name").value = selectedOption.dataset.streetName;
+                                        document.getElementById("billing_city").value = selectedOption.dataset.city;
+                                        document.getElementById("billing_state").value = selectedOption.dataset.state;
+                                        document.getElementById("billing_country").value = selectedOption.dataset.country;
+                                        document.getElementById("billing_zip_code").value = selectedOption.dataset.zipCode;
+                                        document.getElementById("billing_kilometer").value = selectedOption.dataset.kilometer;
+                                        document.getElementById("edit_billing_button").style.display = "block";
+                                    } else {
+                                        // Clear form fields and hide edit button
+                                        document.getElementById("billing_form").reset();
+                                        document.getElementById("edit_billing_button").style.display = "none";
+                                    }
+                                }
+                                
+                                function onbillingEditButtonClick() {
+                                    // Enable form fields for editing
+                                    const formFields = [
+                                        "billing_first_name",
+                                        "billing_last_name",
+                                        "billing_phone_number",
+                                        "billing_address_line",
+                                        "billing_street_name",
+                                        "billing_city",
+                                        "billing_state",
+                                        "billing_country",
+                                        "billing_zip_code",
+                                        "billing_kilometer",
+                                        "billing_order_note"
+                                    ];
+                                    
+                                    formFields.forEach(function(field) {
+                                        document.getElementById(field).disabled = false;
+                                    });
+                                    
+                                    // Show save button and hide edit button
+                                    document.getElementById("save_billing_button").style.display = "block";
+                                    document.getElementById("edit_billing_button").style.display = "none";
+                                }
+                                </script>
+
+                                 <script>
+                                        function enableFormFields() {
+                                            const formFields = [
+                                                "billing_first_name",
+                                                "billing_last_name",
+                                                "billing_phone_number",
+                                                "billing_address_line",
+                                                "billing_street_name",
+                                                "billing_city",
+                                                "billing_state",
+                                                "billing_country",
+                                                "billing_zip_code",
+                                                "billing_kilometer"
+                                            ];
+                                    
+                                            formFields.forEach(function(id) {
+                                                document.getElementById(id).disabled = false;
+                                            });
+                                            document.getElementById("billing_first_name").focus();
+                                        }
+                                        function toggleEditButton() {
+                                            const selectedOption = document.getElementById("billing_address_select").value;
+                                                            if (selectedOption) {
+                                                document.getElementById("edit_billing_button").style.display = "block";
+                                            } else {
+                                                document.getElementById("edit_billing_button").style.display = "none";
+                                            }
+                                        }
+                                    
+                                        document.getElementById("billing_address_select").addEventListener("change", function() {
+                                            const selectedOption = this.options[this.selectedIndex];
+                                                            const firstName = selectedOption.dataset.firstName;
+                                            const lastName = selectedOption.dataset.lastName;
+                                            const phoneNumber = selectedOption.dataset.phoneNumber;
+                                            const addressLine = selectedOption.dataset.addressLine;
+                                            const streetName = selectedOption.dataset.streetName;
+                                            const city = selectedOption.dataset.city;
+                                            const state = selectedOption.dataset.state;
+                                            const country = selectedOption.dataset.country;
+                                            const zipCode = selectedOption.dataset.zipCode;
+                                            const kilometer = selectedOption.dataset.kilometer;
+                                    
+                                            document.getElementById("billing_first_name").value = firstName;
+                                            document.getElementById("billing_first_name").disabled = true;
+                                    
+                                            document.getElementById("billing_last_name").value = lastName;
+                                            document.getElementById("billing_last_name").disabled = true;
+                                    
+                                            document.getElementById("billing_phone_number").value = phoneNumber;
+                                            document.getElementById("billing_phone_number").disabled = true;
+                                    
+                                            document.getElementById("billing_address_line").value = addressLine;
+                                            document.getElementById("billing_address_line").disabled = true;
+                                    
+                                            document.getElementById("billing_street_name").value = streetName;
+                                            document.getElementById("billing_street_name").disabled = true;
+                                    
+                                            document.getElementById("billing_city").value = city;
+                                            document.getElementById("billing_city").disabled = true;
+                                    
+                                            document.getElementById("billing_state").value = state;
+                                            document.getElementById("billing_state").disabled = true;
+                                    
+                                            document.getElementById("billing_country").value = country;
+                                            document.getElementById("billing_country").disabled = true;
+                                    
+                                            document.getElementById("billing_zip_code").value = zipCode;
+                                            document.getElementById("billing_zip_code").disabled = true;
+                                    
+                                            document.getElementById("billing_kilometer").value = kilometer;
+                                            document.getElementById("billing_kilometer").disabled = true;
+                                    
+                                            toggleEditButton();
+                                        });
+                                    
+                                        document.getElementById("edit_billing_button").addEventListener("click", function(event) {
+                                            event.preventDefault();
+                                    
+                                            enableFormFields();
+                                        });
+                    
+                                       function toggleSaveButton() {
+                                        document.getElementById("save_billing_button").style.display = "block";
+                                          document.querySelector("#billing_form .card-footer button[type='submit']").style.display = "none";
+                                         }
+                    
+                                        document.getElementById("edit_billing_button").addEventListener("click", function(event) {
+                                         event.preventDefault();
+                    
+                                         enableFormFields();
+                    
+                                         toggleSaveButton();
+                                             });
+                    
+                                    </script>
+            
+                                
+                            </div>
+                                </div>
+                                <div class="tab-pane fade" id="delivery" role="tabpanel" aria-labelledby="delivery-tab">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-4">Delivery Address</h4>
+                        
+                                      
+                                  <!-- checkout.html -->
+                                  <form id="delivery_form" action="{% url 'edit_delivery_address' %}" method="POST">
+                                    {% csrf_token %}
+                                    
+                                    <!-- Dropdown for existing delivery addresses -->
+                                    <div class="row">
+                                        <div class="mb-3 col-md-6">
+                                            <label for="delivery_address_select" class="form-label">Select delivery Address</label>
+                                            <select id="delivery_address_select" class="form-select" onchange="ondeliveryAddressChange()">
+                                                <option value="">Choose an existing address</option>
+                                                {% for address in delivery_addresses %}
+                                                    <option value="{{ address.id }}"
+                                                            data-first-name="{{ address.first_name }}"
+                                                            data-last-name="{{ address.last_name }}"
+                                                            data-phone-number="{{ address.phone_number }}"
+                                                            data-address-line="{{ address.address_line }}"
+                                                            data-street-name="{{ address.street_name }}"
+                                                            data-city="{{ address.city }}"
+                                                            data-state="{{ address.state }}"
+                                                            data-country="{{ address.country }}"
+                                                            data-zip-code="{{ address.zip_code }}"
+                                                            data-kilometer="{{ address.kilometer }}">
+                                                        {{ address.first_name }} {{ address.last_name }} - {{ address.address_line }}, {{ address.city }}, {{ address.state }}, {{ address.country }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <!-- <div class="col mt-4">
+                                            <button id="edit_delivery_button" class="btn btn-primary" style="display: none;" onclick="ondeliveryEditButtonClick()">Edit</button>
+                                        </div> -->
+                                    </div>
+                                    
+                                    <!-- Form fields for delivery address -->
+                                    <input type="hidden" id="delivery_address_id" name="delivery_address_id" value="">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="delivery_first_name" class="form-label">First Name</label>
+                                            <input type="text" id="delivery_first_name" name="first_name" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="delivery_last_name" class="form-label">Last Name</label>
+                                            <input type="text" id="delivery_last_name" name="last_name" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="delivery_phone_number" class="form-label">Phone Number</label>
+                                            <input type="text" id="delivery_phone_number" name="phone_number" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="delivery_street_name" class="form-label">Street Name</label>
+                                            <input type="text" id="delivery_street_name" name="street_name" class="form-control form-control-sm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="delivery_address_line" class="form-label">Address Line</label>
+                                            <input type="text" id="delivery_address_line" name="address_line" class="form-control form-control-sm" disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="delivery_city" class="form-label">City</label>
+                                            <input type="text" id="delivery_city" name="city" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="delivery_kilometer" class="form-label">Kilometer</label>
+                                            <input type="number" id="delivery_kilometer" name="kilometer" class="form-control form-control-sm" disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="delivery_zip_code" class="form-label">Zip Code</label>
+                                            <input type="text" id="delivery_zip_code" name="zip_code" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="delivery_state" class="form-label">State</label>
+                                            <input type="text" id="delivery_state" name="state" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="delivery_country" class="form-label">Country</label>
+                                            <input type="text" id="delivery_country" name="country" class="form-control form-control-sm" required disabled>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Order Note -->
+            
+                                    
+                                    <!-- Save button -->
+                                    <div class="row">
+                                        <div class="col mt-4">
+                                            <button type="submit" id="save_delivery_button" class="btn btn-primary" style="display: none;">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                <script>
+                                function ondeliveryAddressChange() {
+                                    const selectedOption = document.getElementById("delivery_address_select").options[document.getElementById("delivery_address_select").selectedIndex];
+                                    const deliveryAddressId = selectedOption.value;
+                                
+                                    if (deliveryAddressId) {
+                                        // Populate form fields with data from selected address
+                                        document.getElementById("delivery_address_id").value = deliveryAddressId;
+                                        document.getElementById("delivery_first_name").value = selectedOption.dataset.firstName;
+                                        document.getElementById("delivery_last_name").value = selectedOption.dataset.lastName;
+                                        document.getElementById("delivery_phone_number").value = selectedOption.dataset.phoneNumber;
+                                        document.getElementById("delivery_address_line").value = selectedOption.dataset.addressLine;
+                                        document.getElementById("delivery_street_name").value = selectedOption.dataset.streetName;
+                                        document.getElementById("delivery_city").value = selectedOption.dataset.city;
+                                        document.getElementById("delivery_state").value = selectedOption.dataset.state;
+                                        document.getElementById("delivery_country").value = selectedOption.dataset.country;
+                                        document.getElementById("delivery_zip_code").value = selectedOption.dataset.zipCode;
+                                        document.getElementById("delivery_kilometer").value = selectedOption.dataset.kilometer;
+                                                            document.getElementById("edit_delivery_button").style.display = "block";
+                                    } else {
+                                        document.getElementById("delivery_form").reset();
+                                        document.getElementById("edit_delivery_button").style.display = "none";
+                                    }
+                                }
+                                
+                                function ondeliveryEditButtonClick() {
+                                    const formFields = [
+                                        "delivery_first_name",
+                                        "delivery_last_name",
+                                        "delivery_phone_number",
+                                        "delivery_address_line",
+                                        "delivery_street_name",
+                                        "delivery_city",
+                                        "delivery_state",
+                                        "delivery_country",
+                                        "delivery_zip_code",
+                                        "delivery_kilometer",
+                                        "delivery_order_note"
+                                    ];
+                                    
+                                    formFields.forEach(function(field) {
+                                        document.getElementById(field).disabled = false;
+                                    });
+                                    
+                                    // Show save button and hide edit button
+                                    document.getElementById("save_delivery_button").style.display = "block";
+                                    document.getElementById("edit_delivery_button").style.display = "none";
+                                }
+                                </script>
+                                </div>
+                                         <script>
+                                                    function enableFormFields() {
+                                                        const formFields = [
+                                                            "delivery_first_name",
+                                                            "delivery_last_name",
+                                                            "delivery_phone_number",
+                                                            "delivery_address_line",
+                                                            "delivery_street_name",
+                                                            "delivery_city",
+                                                            "delivery_state",
+                                                            "delivery_country",
+                                                            "delivery_zip_code",
+                                                            "delivery_kilometer"
+                                                        ];
+                                                
+                                                        formFields.forEach(function(id) {
+                                                            document.getElementById(id).disabled = false;
+                                                        });
+                                                        document.getElementById("delivery_first_name").focus();
+                                                    }
+                                                    function toggleEditButton() {
+                                                        const selectedOption = document.getElementById("delivery_address_select").value;
+                                                                        if (selectedOption) {
+                                                            document.getElementById("edit_delivery_button").style.display = "block";
+                                                        } else {
+                                                            document.getElementById("edit_delivery_button").style.display = "none";
+                                                        }
+                                                    }
+                                                
+                                                    document.getElementById("delivery_address_select").addEventListener("change", function() {
+                                                        const selectedOption = this.options[this.selectedIndex];
+                                                                        const firstName = selectedOption.dataset.firstName;
+                                                        const lastName = selectedOption.dataset.lastName;
+                                                        const phoneNumber = selectedOption.dataset.phoneNumber;
+                                                        const addressLine = selectedOption.dataset.addressLine;
+                                                        const streetName = selectedOption.dataset.streetName;
+                                                        const city = selectedOption.dataset.city;
+                                                        const state = selectedOption.dataset.state;
+                                                        const country = selectedOption.dataset.country;
+                                                        const zipCode = selectedOption.dataset.zipCode;
+                                                        const kilometer = selectedOption.dataset.kilometer;
+                                                
+                                                        document.getElementById("delivery_first_name").value = firstName;
+                                                        document.getElementById("delivery_first_name").disabled = true;
+                                                        document.getElementById("delivery_last_name").value = lastName;
+                                                        document.getElementById("delivery_last_name").disabled = true;
+                                                        document.getElementById("delivery_phone_number").value = phoneNumber;
+                                                        document.getElementById("delivery_phone_number").disabled = true;
+                                                        document.getElementById("delivery_address_line").value = addressLine;
+                                                        document.getElementById("delivery_address_line").disabled = true;
+                                                        document.getElementById("delivery_street_name").value = streetName;
+                                                        document.getElementById("delivery_street_name").disabled = true;
+                                                        document.getElementById("delivery_city").value = city;
+                                                        document.getElementById("delivery_city").disabled = true;
+                                                        document.getElementById("delivery_state").value = state;
+                                                        document.getElementById("delivery_state").disabled = true;
+                                                        document.getElementById("delivery_country").value = country;
+                                                        document.getElementById("delivery_country").disabled = true;
+                                                        document.getElementById("delivery_zip_code").value = zipCode;
+                                                        document.getElementById("delivery_zip_code").disabled = true;
+                                                        document.getElementById("delivery_kilometer").value = kilometer;
+                                                        document.getElementById("delivery_kilometer").disabled = true;
+                                                        toggleEditButton();
+                                                    });
+                                                    document.getElementById("edit_delivery_button").addEventListener("click", function(event) {
+                                                        event.preventDefault();
+                                                
+                                                        enableFormFields();
+                                                    });
+                                                   function toggleSaveButton() {
+                                                    document.getElementById("save_delivery_button").style.display = "block";
+                                                      document.querySelector("#delivery_form .card-footer button[type='submit']").style.display = "none";
+                                                     }
+                                                    document.getElementById("edit_delivery_button").addEventListener("click", function(event) {
+                                                     event.preventDefault();
+                                
+                                                     enableFormFields();
+                                
+                                                     toggleSaveButton();
+                                                         });
+                                          </script>
+                                      </script>
+                                   </div>
+                                </div>
+                                </script>
+                                </div>
+                            </div>
+                        </div>
+<style>
+    .sticky-aside {
+    position: sticky;
+    top: 80px; /* Adjust as needed */
+    height: fit-content; /* Ensures the height adjusts based on content */
+    overflow-y: auto; /* Adds vertical scrolling if content exceeds height */
+}
+</style>
+                         <aside class="col-lg-6 sticky-aside">
+                    <div class="card">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                    <th scope="col" width="100" class="text-center">Quantity</th>
+                                    <th scope="col" width="100" class="text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-block d-sm-flex text-center text-sm-start">
+                                            <img src="{{ cart_item.product.image.url }}" width="50" alt="Product" class="border border-accent rounded-3 me-3">
+                                            <span style="font-size: 14px;">{{ cart_item.product }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{ cart_item.quantity }}</td>
+                                    <td class="text-center">
+                                        <div class="fs-lg text-accent pt-2">Rs. ₹{{ cart_item.sub_total|floatformat:2 }}</div>
+                                        <small>Rs. ₹{{ cart_item.product.price|floatformat:2 }} each</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between">
+                                <div class="dlist-align">
+                                    <dt>Total Amount:</dt>
+                                    <dd class="text-right text-dark b">
+                                        <strong>Rs. ₹{{ total|floatformat:2 }}</strong>
+                                    </dd>
+                                </div>
+                                <div class="dlist-align">
+                                    <dt>Price Discount Amount:</dt>
+                                    <dd class="text-right text-dark">
+                                        Rs. ₹{{ discount_amount|floatformat:2 }} ({{ discount_percent|floatformat:0 }}%)
+                                    </dd>
+                                </div>
+                                <div class="dlist-align">
+                                    <dt>Grand Total:</dt>
+                                    <dd class="text-right text-dark b">
+                                        <strong>Rs. ₹{{ grand_total|floatformat:2 }}</strong>
+                                    </dd>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer mt-3">
+                            <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+                        
+                            <a href="#" class="btn btn-primary btn-block" onclick="checkAddresses()">Place Order</a>
+                        </div>
+                    </div>
+                </aside>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        </div>
+        <script>
+            function checkAddresses() {
+                const billingAddressId = document.getElementById("billing_address_select").value;
+                const deliveryAddressId = document.getElementById("delivery_address_select").value;
+                if (billingAddressId && deliveryAddressId) {
+                    window.location.href = "{% url 'payment' %}";
+                } else {
+                    alert("Please select both billing and delivery addresses.");
+                }
+            }
+        </script>
+    </section>
+</main>
+{% endblock %}

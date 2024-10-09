@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <a href="{% url 'checkout' %}" class="btn btn-primary">Back</a>
+                    Add a new billing address</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- First Name, Last Name, and Email in one row -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="first_name" class="form-label">First Name</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Number, Address Line 1, and Address Line 2 in one row -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="address_line_1" class="form-label">Address Line 1</label>
+                            {{ form.address_line_1 }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="address_line_2" class="form-label">Address Line 2</label>
+                            {{ form.address_line_2 }}
+                        </div>
+                    </div>
+                    
+                    <!-- City, State, and Country in one row -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            {{ form.state }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="country" class="form-label">Country</label>
+                            {{ form.country }}
+                        </div>
+                    </div>
+                    
+                    <!-- Zip Code, optional space for future use, and Submit button in one row -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="zip_code" class="form-label">Zip Code</label>
+                            {{ form.zip_code }}
+                        </div>
+                        <!-- Optional: Empty column for future use or any other content -->
+                        <div class="col-md-4 mb-3"></div>
+                        <!-- Submit button -->
+                        <div class="col-md-4 mb-3">
+                            <button type="submit" class="btn btn-primary">Add Address</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="existing-addresses">
+        <h4>Your Billing Addresses</h4>
+        <ul>
+            {% for address in billing_addresses %}
+                <li>
+                    {{ address.first_name }} {{ address.last_name }} - {{ address.address_line_1 }}, {{ address.city }}, {{ address.state }}, {{ address.country }}
+                </li>
+            {% empty %}
+                <li>No billing addresses found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,53 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from cart.models import Profile  # Import Profile model
+from .forms import *
+
+@login_required
+def addProduct(request):
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+        print("User Profile Type:", user_profile.user_type)  # Add this line for debugging
+        if user_profile.user_type == 'management':
+            if request.method == 'POST':
+                form = ProductForm(request.POST, request.FILES)
+                if form.is_valid():
+                    form.save()
+                    return redirect('home')
+            else:
+                form = ProductForm()
+            context = {
+                "form": form
+            }
+            return render(request, 'addProduct.html', context)
+        else:
+            return render(request, 'access_denied.html')
+    except Profile.DoesNotExist:
+        # Create a profile for the user if it doesn't exist
+        Profile.objects.create(user=request.user, user_type='management')
+        return redirect('addProduct')  # Redirect to the addProduct view
+
+
+def addCategory(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('addCategory')  # Redirect to add product page after adding category
+    else:
+        form = CategoryForm()
+    return render(request, 'addCategory.html', {'form': form})
+
+
+def addProductGallery(request, product_id):
+    product = Product.objects.get(pk=product_id)
+    if request.method == 'POST':
+        form = ProductGalleryForm(request.POST, request.FILES)
+        if form.is_valid():
+            product_gallery = form.save(commit=False)
+            product_gallery.product = product  # Assign the product to the product_gallery
+            product_gallery.save()
+            return redirect('product_gallery')  # Redirect to product gallery page after adding image
+    else:
+        form = ProductGalleryForm()
+    return render(request, 'addProductGallery.html', {'form': form})

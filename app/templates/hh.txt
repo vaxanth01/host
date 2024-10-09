@@ -1,0 +1,21 @@
+def zip(request):
+    userprofile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        user_form = UserProfileForm(request.POST, instance=request.user)
+        zip_profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+
+        if user_form.is_valid() and zip_profile_form.is_valid():
+            user_form.save()
+            zip_profile_form.save()
+            messages.success(request, f'your profile has been updated')
+            return redirect('checkout')
+    else:
+       user_form =  UserProfileForm(instance=request.user)
+       zip_profile_form = UserProfileForm(instance=userprofile)
+    
+    context ={
+        'user_form': user_form,
+        'zip_profile_form':zip_profile_form,
+        'userprofile':userprofile
+    }
+    return render(request, 'accounts/edit_profile.html',context)

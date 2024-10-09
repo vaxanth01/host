@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 6rem;">
+    <li class="nav-item px-3 pb-2" role="presentation">
+        <a href="{% url 'cart' %}" ><i class="fa-solid fa-arrow-left"></i></a></i>
+    </li>
+    <section>
+        <div class="container">
+            {% if not cart_items %}
+            <h2>Your Shopping Cart is Empty</h2>
+            <br />
+            <div class="text-start ">
+                <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+            </div>
+            {% else %}
+            <div class="row">
+                <aside class="col-lg-9">
+                    <div class="card">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col" width="250" class="text-start">Product</th>
+                                    <th scope="col" width="200" class="text-start">Quantity</th>
+                                    <th scope="col" width="200" class="text-start">Price</th>
+                                    <th scope="col" width="200" class="text-start">Final Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-block d-sm-flex text-start text-sm-start">
+                                            <img src="{{ cart_item.product.image.url }}" width="80" alt="Product" class="border border-accent rounded-3">
+                                            <h3 class="fs-base mb-2 ps-3" style="line-height: 1.6;">{{ cart_item.product }}</h3>
+                                        </div>
+                                    </td>
+                                    <td class="text-start">
+                                        <div class="d-flex">
+                                            <div class="my-auto">
+                                                <a href="{% url 'remove_cart' cart_item.product.id %}" class="btn btn-secondary rounded-circle py-0 px-2" type="button">-</a>
+                                            </div>
+                                            <form class="col-lg-6" action="{% url 'update_cart_item' cart_item.product.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="number" name="quantity" class="form-control text-start" value="{{ cart_item.quantity }}" min="1" onchange="this.form.submit()">
+                                            </form>
+                                            <div class="my-auto">
+                                                <a href="{% url 'add-cart' cart_item.product.id %}" class="btn btn-secondary btn-icon rounded-circle py-0 px-2" type="button">+</a>
+                                            </div>
+                                        </div>
+                                        <form action="{% url 'remove_cart_item' cart_item.product.id %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <button class="btn btn-link px-0 text-danger" type="submit">
+                                                <i class="ci-close-circle me-2"></i>
+                                                <span class="fs-sm">Remove</span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="text-start">
+                                        <div class="text-accent pt-2"> Rs.₹ {{ cart_item.final_price|floatformat:2 }}</div>
+                                        <small>Rs.₹ {{ cart_item.product.price }} each</small>
+                                    </td>
+                                    <td class="text-start">
+                                        <div class="pt-2">
+                                            {% if cart_item.product.discount_types.all %}
+                                                Discounted Price <br >Rs.₹ {{ cart_item.discounted_price|floatformat:2 }} 
+                                                <br>
+                                                 <div class="text-accent">
+                                                {% if cart_item.quantity < 10 %}
+                                                    (Get more items for more discounts)
+                                                {% elif cart_item.quantity < 20 %}
+                                                    (5% discount applied for 10 to 20 items)
+                                                {% elif cart_item.quantity < 40 %}
+                                                    (8% discount applied for 20 to 40 items)
+                                                {% else %}
+                                                    (10% discount applied for 40 to 100 items)
+                                                {% endif %}
+                                            </div>
+
+                                                Final Price <br> Rs.₹ {{ cart_item.final_price|floatformat:2 }}
+                                            {% else %}
+                                               Final Price <br> Rs.₹ {{ cart_item.product.price }}
+                                            {% endif %}
+                                    </td>
+
+                                    {% for data in cart_data %}
+    {% with cart_item=data.cart_item %}
+        <td class="text-start">
+            <div class="pt-2">
+                {% if data.discount_percent > 0 %}
+                    Discounted Price <br> Rs.₹ {{ data.discounted_price|floatformat:2 }} 
+                    <br>
+                    <div class="text-accent">
+                        ({{ data.discount_percent }}% discount applied)
+                    </div>
+                    Final Price <br> Rs.₹ {{ data.final_price|floatformat:2 }}
+                {% else %}
+                    Final Price <br> Rs.₹ {{ cart_item.product.price|floatformat:2 }}
+                {% endif %}
+            </div>
+        </td>
+    {% endwith %}
+{% endfor %}
+
+                                    
+                                </tr>
+                                {% endfor %}
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- card.// -->
+                </aside>
+                <!-- col.// -->
+                <aside class="col-lg-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <dl class="dlist-align">
+                                <dt>Total price: </dt>
+                                <dd class="text-right">Rs.₹ {{ total|floatformat:2 }}</dd>
+                            </dl>
+                            <dl class="dlist-align">
+                                <dt>Discount:</dt>
+                                <dd class="text-right">Rs.₹ {{ discount_amount|floatformat:2 }} ({{ discount_percent|floatformat:2 }}%)</dd>
+                            </dl>
+                            <dl class="dlist-align">
+                                <dt>Grand Total:</dt>
+                                <dd class="text-right text-dark b">
+                                    <strong>Rs.₹ {{ final_total_price|floatformat:2 }}</strong>
+                                </dd>
+                            </dl>
+                            
+                            <hr />
+                            <p class="text-start mb-3">
+                                <img src="{% static 'images/misc/payments.png' %}" height="26" />
+                            </p>
+                            <a class="btn btn-primary btn d-block w-100 mt-4" href="{% url 'checkout' %}">
+                                <i class="ci-card fs-lg me-2"></i>Proceed to Checkout
+                            </a>
+                        </div>
+                        <!-- card-body.// -->
+                    </div>
+                    <!-- card.// -->
+                </aside>
+                <!-- col.// -->
+            </div>
+            <!-- row.// -->
+            {% endif %}
+        </div>
+        <!-- container .//  -->
+    </section>
+</main>
+{% endblock content %}

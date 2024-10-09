@@ -1,0 +1,554 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <section class="ps-lg-4 pe-lg-3">
+        <div class="container">
+            <div class="row">
+                {% include 'accounts/dashbord_sidebar.html' %}
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                            <h4 class="card-title mb-4 col mb-3"></h4>
+                           
+                            </div>
+                      <!-- checkout.html -->
+                      <form id="billing_form" action="{% url 'edit_billing_address' %}" method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Dropdown for existing billing addresses -->
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="billing_address_select" class="form-label"></label>
+                                <select id="billing_address_select" class="form-select" onchange="onbillingAddressChange()">
+                                    <option value="">Choose an existing address</option>
+                                    {% for address in billing_addresses %}
+                                        <option value="{{ address.id }}"
+                                                data-first-name="{{ address.first_name }}"
+                                                data-last-name="{{ address.last_name }}"
+                                                data-phone-number="{{ address.phone_number }}"
+                                                data-address-line="{{ address.address_line }}"
+                                                data-street-name="{{ address.street_name }}"
+                                                data-city="{{ address.city }}"
+                                                data-state="{{ address.state }}"
+                                                data-country="{{ address.country }}"
+                                                data-zip-code="{{ address.zip_code }}"
+                                                data-kilometer="{{ address.kilometer }}"
+                                                data-email="{{ address.email }}"
+                                                data-alter_number="{{ address.alter_number }}"
+                                                data-address_line="{{ address.address_line }}">
+                                            {{ address.first_name }} {{ address.last_name }} - {{ address.address_line }}, {{ address.city }}, {{ address.state }}, {{ address.country }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col mt-4">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#address_showModal">
+                                            <i class="fa-solid fa-list"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button id="edit_billing_button" class="btn btn-primary" style="display:none;" onclick="onbillingEditButtonClick()">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                               
+                                
+                            </div>
+                        </div>
+                        <input type="hidden" id="billing_address_id" name="billing_address_id" value="">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="billing_first_name" class="form-label">First Name</label>
+                                <input type="text" id="billing_first_name" name="first_name" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_last_name" class="form-label">Last Name</label>
+                                <input type="text" id="billing_last_name" name="last_name" class="form-control form-control-sm" required disabled>
+                            </div>
+                           
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="billing_email" class="form-label">Email</label>
+                                <input type="email" id="billing_email" name="email" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_phone_number" class="form-label">Phone Number</label>
+                                <input type="text" id="billing_phone_number" name="phone_number" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_alter_number" class="form-label">Alter number</label>
+                                <input type="text" id="billing_alter_number" name="alter_number" class="form-control form-control-sm" required disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="billing_address_line" class="form-label">Address Line</label>
+                                <input type="text" id="billing_address_line" name="address_line" class="form-control form-control-sm" disabled>
+                            </div>
+                           
+                            <div class="col mb-3">
+                                <label for="billing_street_name" class="form-label">Street Name</label>
+                                <input type="text" id="billing_street_name" name="street_name" class="form-control form-control-sm" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="billing_city" class="form-label">City</label>
+                                <input type="text" id="billing_city" name="city" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_state" class="form-label">State</label>
+                                <input type="text" id="billing_state" name="state" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_zip_code" class="form-label">Zip Code</label>
+                                <input type="text" id="billing_zip_code" name="zip_code" class="form-control form-control-sm" required disabled>
+                            </div>
+                         
+                           
+                        </div>
+                        <div class="row">
+                           
+                            <div class="col mb-3">
+                                <label for="billing_country" class="form-label">Country</label>
+                                <input type="text" id="billing_country" name="country" class="form-control form-control-sm" required disabled>
+                            </div>
+                            <div class="col mb-3">
+                                <label for="billing_kilometer" class="form-label">Kilometer</label>
+                                <input type="number" id="billing_kilometer" name="kilometer" class="form-control form-control-sm" disabled>
+                            </div>
+                        </div>
+                        
+                        
+                        <!-- Save button -->
+                        <div class="row">
+                            <div class="col mt-4">
+                                <button type="submit" id="save_billing_button" class="btn btn-primary" style="display: none;">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                        <script>
+                        function onbillingAddressChange() {
+                            const selectedOption = document.getElementById("billing_address_select").options[document.getElementById("billing_address_select").selectedIndex];
+                            const billingAddressId = selectedOption.value;
+                        
+                            if (billingAddressId) {
+                                // Populate form fields with data from selected address
+                                document.getElementById("billing_address_id").value = billingAddressId;
+                                document.getElementById("billing_first_name").value = selectedOption.dataset.firstName;
+                                document.getElementById("billing_last_name").value = selectedOption.dataset.lastName;
+                                document.getElementById("billing_phone_number").value = selectedOption.dataset.phoneNumber;
+                                document.getElementById("billing_address_line").value = selectedOption.dataset.addressLine;
+                                document.getElementById("billing_street_name").value = selectedOption.dataset.streetName;
+                                document.getElementById("billing_city").value = selectedOption.dataset.city;
+                                document.getElementById("billing_state").value = selectedOption.dataset.state;
+                                document.getElementById("billing_country").value = selectedOption.dataset.country;
+                                document.getElementById("billing_zip_code").value = selectedOption.dataset.zipCode;
+                                document.getElementById("billing_kilometer").value = selectedOption.dataset.kilometer;
+                                document.getElementById("billing_email").value = selectedOption.dataset.email;
+                                document.getElementById("billing_alter_number").value = selectedOption.dataset.alter_number;
+                                document.getElementById("billing_address_line").value = selectedOption.dataset.address_line;
+                        
+                                // Show edit button
+                                document.getElementById("edit_billing_button").style.display = "block";
+                            } else {
+                                // Clear form fields and hide edit button
+                                document.getElementById("billing_form").reset();
+                                document.getElementById("edit_billing_button").style.display = "none";
+                            }
+                        }
+                        
+                        function onbillingEditButtonClick() {
+                            // Enable form fields for editing
+                            const formFields = [
+                                "billing_first_name",
+                                "billing_last_name",
+                                "billing_phone_number",
+                                "billing_address_line",
+                                "billing_street_name",
+                                "billing_city",
+                                "billing_state",
+                                "billing_country",
+                                "billing_zip_code",
+                                "billing_kilometer",
+                                "billing_order_note",
+                                "billing_email",
+                                "billing_alter_number",
+                                "billing_address_line"
+                            ];
+                            
+                            formFields.forEach(function(field) {
+                                document.getElementById(field).disabled = false;
+                            });
+                            
+                            // Show save button and hide edit button
+                            document.getElementById("save_billing_button").style.display = "block";
+                            document.getElementById("edit_billing_button").style.display = "none";
+                        }
+                        </script>
+                    
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                             <script>
+                                        function enableFormFields() {
+                                            const formFields = [
+                                                "billing_first_name",
+                                                "billing_last_name",
+                                                "billing_phone_number",
+                                                "billing_address_line",
+                                                "billing_street_name",
+                                                "billing_city",
+                                                "billing_state",
+                                                "billing_country",
+                                                "billing_zip_code",
+                                                "billing_kilometer",
+                                                "billing_address_line",
+                                                "billing_alter_number",
+                                                "billing_email",
+                                            ];
+                                    
+                                            formFields.forEach(function(id) {
+                                                document.getElementById(id).disabled = false;
+                                            });
+                                            document.getElementById("billing_first_name").focus();
+                                        }
+                                        function toggleEditButton() {
+                                            const selectedOption = document.getElementById("billing_address_select").value;
+                                                            if (selectedOption) {
+                                                document.getElementById("edit_billing_button").style.display = "block";
+                                            } else {
+                                                document.getElementById("edit_billing_button").style.display = "none";
+                                            }
+                                        }
+                                    
+                                        document.getElementById("billing_address_select").addEventListener("change", function() {
+                                            const selectedOption = this.options[this.selectedIndex];
+                                            const firstName = selectedOption.dataset.firstName;
+                                            const lastName = selectedOption.dataset.lastName;
+                                            const phoneNumber = selectedOption.dataset.phoneNumber;
+                                            const addressLine = selectedOption.dataset.addressLine;
+                                            const streetName = selectedOption.dataset.streetName;
+                                            const city = selectedOption.dataset.city;
+                                            const state = selectedOption.dataset.state;
+                                            const country = selectedOption.dataset.country;
+                                            const zipCode = selectedOption.dataset.zipCode;
+                                            const kilometer = selectedOption.dataset.kilometer;
+                                            const address_line = selectedOption.dataset.address_line;
+                                            const alter_number = selectedOption.dataset.alter_number;
+                                            const email = selectedOption.dataset.email;
+                                    
+                                            document.getElementById("billing_first_name").value = firstName;
+                                            document.getElementById("billing_first_name").disabled = true;
+                                    
+                                            document.getElementById("billing_last_name").value = lastName;
+                                            document.getElementById("billing_last_name").disabled = true;
+                                    
+                                            document.getElementById("billing_phone_number").value = phoneNumber;
+                                            document.getElementById("billing_phone_number").disabled = true;
+                                    
+                                            document.getElementById("billing_address_line").value = addressLine;
+                                            document.getElementById("billing_address_line").disabled = true;
+                                    
+                                            document.getElementById("billing_street_name").value = streetName;
+                                            document.getElementById("billing_street_name").disabled = true;
+                                    
+                                            document.getElementById("billing_city").value = city;
+                                            document.getElementById("billing_city").disabled = true;
+                                    
+                                            document.getElementById("billing_state").value = state;
+                                            document.getElementById("billing_state").disabled = true;
+                                    
+                                            document.getElementById("billing_country").value = country;
+                                            document.getElementById("billing_country").disabled = true;
+                                    
+                                            document.getElementById("billing_zip_code").value = zipCode;
+                                            document.getElementById("billing_zip_code").disabled = true;
+                                    
+                                            document.getElementById("billing_kilometer").value = kilometer;
+                                            document.getElementById("billing_kilometer").disabled = true;
+
+                                            document.getElementById("email").value = email;
+                                            document.getElementById("email").disabled = true;
+                                    
+                                            document.getElementById("alter_number").value = alter_number;
+                                            document.getElementById("alter_number").disabled = true;
+                                    
+                                            document.getElementById("address_line").value = address_line;
+                                            document.getElementById("address_line").disabled = true;
+                                    
+                                            toggleEditButton();
+                                        });
+                                    
+                                        document.getElementById("edit_billing_button").addEventListener("click", function(event) {
+                                            event.preventDefault();
+                                    
+                                            enableFormFields();
+                                        });
+                    
+                                       function toggleSaveButton() {
+                                        document.getElementById("save_billing_button").style.display = "block";
+                                          document.querySelector("#billing_form .card-footer button[type='submit']").style.display = "none";
+                                         }
+                    
+                                        document.getElementById("edit_billing_button").addEventListener("click", function(event) {
+                                         event.preventDefault();
+                    
+                                         enableFormFields();
+                    
+                                         toggleSaveButton();
+                                             });
+                    
+                                    </script>
+                       </div>
+                      </div>
+                    </script>
+            </div>
+        </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3 row">
+                        <div class="col-md-4">
+                            <label for="modal_first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="modal_first_name" name="first_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="modal_last_name" name="last_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="modal_email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-md-4">
+                            <label for="modal_phone_number" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="modal_phone_number" name="phone_number" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_alter_number" class="form-label">Alternate Number</label>
+                            <input type="tel" class="form-control" id="modal_alter_number" name="alter_number" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_address_line" class="form-label">Address Line</label>
+                            <input type="text" class="form-control" id="modal_address_line" name="address_line" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-md-4">
+                            <label for="modal_street_name" class="form-label">Street Name</label>
+                            <input type="text" class="form-control" id="modal_street_name" name="street_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="modal_city" name="city" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="modal_state" name="state" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-md-4">
+                            <label for="modal_zip_code" class="form-label">Zip Code</label>
+                            <input type="text" class="form-control" id="modal_zip_code" name="zip_code" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_country" class="form-label">Country</label>
+                            <input type="text" class="form-control" id="modal_country" name="country" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modal_kilometer" class="form-label">Kilometer</label>
+                            <input type="number" class="form-control" id="modal_kilometer" name="kilometer" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="saveAddressBtn">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Listen for form submission
+        $('#addressForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Make AJAX request
+            fetch("{% url 'add_address' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "{% url 'address' %}";
+                } else {
+                    alert('Error: ' + data.errors);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again later.');
+            });
+        });
+    });
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="address_showModal" tabindex="-1" aria-labelledby="address_showModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="address_showModalLabel">Your Addresses</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addresses-container">
+                    <ul id="address-list" class="list-group">
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function loadAddresses() {
+            $.get("{% url 'get_addresses' %}", function(response) {
+                if (response.success) {
+                    $('#address-list').empty();
+                    response.addresses.forEach(function(address) {
+                        let listItem = `
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>${address.street_name}, ${address.city}, ${address.state} (${address.zip_code})</span>
+                                    <div>
+                                        <!-- Radio button to select default -->
+                                        <input type="radio" name="default_address" value="${address.id}" ${address.is_default ? 'checked' : ''}>
+                                        <span>Set Default address</span>
+                                        <!-- Save button -->
+                                        <button type="button" class="btn btn-success btn-sm save-default-btn" data-address-id="${address.id}">
+                                            Save
+                                        </button>
+                                        <!-- Delete button -->
+                                        <button type="button" class="btn btn-danger btn-sm delete-address-btn" data-address-id="${address.id}">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                        $('#address-list').append(listItem);
+                    });
+                    attachDeleteButtonListeners();
+                    attachDefaultAddressListeners();
+                    attachSaveButtonListeners();
+                } else {
+                    console.error('Failed to load addresses: ' + response.error);
+                }
+            });
+        }
+        function attachDeleteButtonListeners() {
+            $('.delete-address-btn').on('click', function() {
+                const addressId = $(this).data('address-id');
+                $.post("{% url 'delete_address' %}", {
+                    address_id: addressId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }, function(response) {
+                    if (response.success) {
+                        loadAddresses();
+                    } else {
+                        console.error('Failed to delete address: ' + response.error);
+                    }
+                });
+            });
+        }
+    
+        function attachDefaultAddressListeners() {
+            $('input[name="default_address"]').on('change', function() {
+                const selectedAddressId = $(this).val();
+                $.post("{% url 'set_default_address' %}", {
+                    address_id: selectedAddressId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }, function(response) {
+                    if (response.success) {
+                        console.log('Default address set successfully.');
+                    } else {
+                        console.error('Failed to set default address: ' + response.error);
+                    }
+                });
+            });
+        }
+    
+                          function attachSaveButtonListeners() {
+                       $('.save-default-btn').on('click', function() {
+                        const selectedAddressId = $(this).data('address-id');
+                        $.post("{% url 'set_default_address' %}", {
+                          address_id: selectedAddressId,
+                       csrfmiddlewaretoken: '{{ csrf_token }}'
+                        }, function(response) {
+                       if (response.success) {
+                        console.log('Default address set successfully.');
+                        loadAddresses();
+                       } else {
+                              console.error('Failed to set default address: ' + response.error);
+                             }
+                           });
+                           });
+                          }
+                        $('#address_showModal').on('show.bs.modal', function() {
+                            loadAddresses();
+                                  });
+                                });
+                              </script>  
+
+{% endblock %}

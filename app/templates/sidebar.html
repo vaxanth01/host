@@ -1,0 +1,284 @@
+<aside class="offcanvas offcanvas-expand zindex-lg-5 pt-lg-5" id="sideNav" style="max-width: 21.875rem; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #197149;">
+    <div class="pt-2 d-none d-lg-block"></div>
+    <ul class="nav mt-4 mb-0" role="tablist">
+        <li class="nav-item">
+            <style>
+                input{}
+            li{
+                list-style: none;
+            }</style>
+
+
+
+
+
+            <div class="nav-link fw-medium mx-2  active text-white" href="#categories" data-bs-toggle="tab" role="tab">CATEGORY
+            </div>
+        </li>
+    </ul>
+    <div class="offcanvas-body px-0 pt-0 ">
+        <button id="filterButton" class="btn btn-light btn-sm mx-5">Filter</button>
+        <div class="sidebar-nav py-0 tab-pane fade show active" id="categories" role="tabpanel">
+            <ul id="categoryTree py-0" class="tree">
+                {% for category in links %}
+                    {% if not category.parent %}
+                        <li class="mt-2">
+                            <a class="parent-node text-white " href="{% url 'store' %}?category={{ category.category_name }}">
+                                <i class="fa-solid fa-plus"></i>
+                                <input class="mx-2 category-checkbox" type="checkbox" data-category="{{ category.category_name }}">
+                                <i class="{{ category.icon }} fs-lg opacity-60 mt-n1 text-white"></i>{{ category.category_name }}
+                            </a>
+                            {% if category.children.all %}
+                                <ul class="child-categories">
+                                    {% for child_category in category.children.all %}
+                                        <li>
+                                            <a href="{% url 'store' %}?category={{ child_category.category_name }}" class="nav-link-style d-block fs-md fw-normal px-grid-gutter text-white category-name">
+                                                <i class="fa-solid fa-plus p-2"></i>
+                                                <input class="mx-2 category-checkbox" type="checkbox" data-category="{{ child_category.category_name }}">
+                                                <i class="{{ child_category.icon }} fs-lg opacity-60 mt-n1 text-white"></i>{{ child_category.category_name }}
+                                            </a>
+                                            {% include "sub_categories.html" with category=child_category %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="wrapper text-white p-4">
+        <div class="price-input">
+            <div class="field">
+                <span>Min</span>
+                <input type="number" class="input-min" id="minPrice" value="{{ min_price }}">
+            </div>
+            <div class="separator"></div>
+            <div class="field">
+                <span>Max</span>
+                <input type="number" class="input-max" id="maxPrice" value="{{ max_price }}">
+            </div>
+        </div>
+        <div class="slider">
+            <div class="progress"></div>
+        </div>
+        <div class="range-input mb-3">
+            <input type="range" class="range-min" id="priceRangeMin" min="1" max="100000" step="100" value="{{ min_price }}">
+            <input type="range" class="range-max" id="priceRangeMax" min="1" max="100000" step="100" value="{{ max_price }}">
+        </div>
+        <button id="filterButton" class="btn btn-light btn-sm mx-5" onclick="applyFilter()">Filter</button>
+    
+        <script>
+            function applyFilter() {
+                // Get the minimum and maximum prices from the input fields
+                var minPrice = document.getElementById("minPrice").value;
+                var maxPrice = document.getElementById("maxPrice").value;
+        
+                // Construct the URL with the selected price range
+                var url = '{% url 'store' %}?';
+                if (minPrice) {
+                    url += 'min_price=' + minPrice;
+                }
+                if (maxPrice) {
+                    url += '&max_price=' + maxPrice;
+                }
+        
+                // Redirect to the filtered URL
+                window.location.href = url;
+            }
+        </script>
+        
+
+
+<style>
+.price-input {
+  width: 100%;
+  display: flex;
+  margin: 30px 0 35px;
+}
+
+.price-input .field {
+  display: flex;
+  width: 100%;
+  height: 45px;
+  align-items: center;
+}
+.field input {
+  width: 70%;
+  height: 70%;
+  background-color: #197149;
+  color: #ffffff;
+  outline: none;
+  font-size: 16px;
+  margin-left: 12px;
+  border-radius: 5px;
+  text-align: center;
+  border: 2px solid #ffffff;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.price-input .separator {
+  width: 100px;
+  display: flex;
+  font-size: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.slider {
+  height: 5px;
+  position: relative;
+  background: #ddd;
+  border-radius: 5px;
+}
+.slider .progress {
+  height: 100%;
+  left: 0%;
+  right: 0%;
+  position: absolute;
+  border-radius: 5px;
+  background:#7fdbb2;
+}
+.range-input {
+  position: relative;
+}
+.range-input input {
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  top: -5px;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  background: #8fa1a3;
+  pointer-events: auto;
+  -webkit-appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+input[type="range"]::-moz-range-thumb {
+  height: 17px;
+  width: 17px;
+  border: none;
+  border-radius: 50%;
+  background: #9cacaf;
+  pointer-events: auto;
+  -moz-appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+
+
+</style>    
+    <script>
+        const rangeInput = document.querySelectorAll(".range-input input"),
+            priceInput = document.querySelectorAll(".price-input input"),
+            range = document.querySelector(".slider .progress");
+        let priceGap = 1000;
+    
+        priceInput.forEach((input) => {
+            input.addEventListener("input", (e) => {
+                let minPrice = parseInt(priceInput[0].value),
+                    maxPrice = parseInt(priceInput[1].value);
+    
+                if (maxPrice - minPrice >= priceGap && maxPrice <= rangeInput[1].max) {
+                    if (e.target.className === "input-min") {
+                        rangeInput[0].value = minPrice;
+                        range.style.left = (minPrice / rangeInput[0].max) * 100 + "%";
+                    } else {
+                        rangeInput[1].value = maxPrice;
+                        range.style.right = 100 - (maxPrice / rangeInput[1].max) * 100 + "%";
+                    }
+                }
+            });
+        });
+    
+        rangeInput.forEach((input) => {
+            input.addEventListener("input", (e) => {
+                let minVal = parseInt(rangeInput[0].value),
+                    maxVal = parseInt(rangeInput[1].value);
+    
+                if (maxVal - minVal < priceGap) {
+                    if (e.target.className === "range-min") {
+                        rangeInput[0].value = maxVal - priceGap;
+                    } else {
+                        rangeInput[1].value = minVal + priceGap;
+                    }
+                } else {
+                    priceInput[0].value = minVal;
+                    priceInput[1].value = maxVal;
+                    range.style.left = (minVal / rangeInput[0].max) * 100 + "%";
+                    range.style.right = 100 - (maxVal / rangeInput[1].max) * 100 + "%";
+                }
+            });
+        });
+    </script>
+    
+    <!-- Import Font Awesome for PayPal icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+        
+      
+        <h6 class=" text-white mt-4">Follow us</h6><a class="btn-social text-white bs-outline bs-twitter me-2 mb-2"
+            href="#"><i class="ci-twitter"></i></a><a class="btn-social text-white bs-outline bs-facebook me-2 mb-2"
+            href="#"><i class="ci-facebook"></i></a><a class="btn-social text-white bs-outline bs-instagram me-2 mb-2"
+            href="#"><i class="ci-instagram"></i></a><a class="btn-social text-white bs-outline bs-youtube me-2 mb-2"
+            href="#"><i class="ci-youtube"></i></a>
+    </div>
+</aside>
+<script>
+    $(document).ready(function(){
+        $('.child-categories').hide();
+        $(document).on('click', '.fa-plus, .fa-minus', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).closest('li').children('.child-categories').slideToggle();
+            $(this).toggleClass('fa-plus fa-minus');
+        });
+        $(document).on('change', '.parent-node input[type="checkbox"]', function() {
+            var isChecked = $(this).prop('checked');
+            $(this).closest('.parent-node').next('.child-categories').find('input[type="checkbox"]').prop('checked', isChecked);
+            checkLeafNodes($(this).closest('.parent-node').next('.child-categories'));
+        });
+        $(document).on('change', '.child-categories input[type="checkbox"]', function() {
+            var isChecked = $(this).prop('checked');
+            if (!isChecked) {
+                $(this).closest('.child-categories').prev('.parent-node').find('input[type="checkbox"]').prop('checked', false);
+            }
+            checkLeafNodes($(this).closest('.child-categories'));
+        });
+        function checkLeafNodes($element) {
+            $element.find('.child-categories').each(function() {
+                var $childCategories = $(this);
+                var $childCheckboxes = $childCategories.find('input[type="checkbox"]');
+                var $leafCheckboxes = $childCheckboxes.not('.parent-node input[type="checkbox"]');
+                var allChecked = $leafCheckboxes.length > 0 && $leafCheckboxes.length === $leafCheckboxes.filter(':checked').length;
+                $childCategories.prev('.parent-node').find('input[type="checkbox"]').prop('checked', allChecked);
+                if ($childCategories.length > 0) {
+                    checkLeafNodes($childCategories);
+                }
+            });
+        }
+        $('.category-checkbox').change(function() {
+            var isChecked = $(this).prop('checked');
+            $(this).closest('li').find('.category-checkbox').prop('checked', isChecked);
+        });
+        $('#filterButton').on('click', function() {
+            var selectedCategories = [];
+            $('.category-checkbox:checked').each(function() {
+                selectedCategories.push($(this).data('category'));
+            });
+            var url = '{% url 'store' %}?category={{ category.category_name }}' + selectedCategories.join('&category=');
+            window.location.href = url;
+        });
+    });
+</script>

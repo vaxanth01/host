@@ -1,0 +1,26 @@
+<!-- process_payment.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing</title>
+</head>
+<body>
+    <h1>Payment Processing Status</h1>
+    <p>Payment Status: {{ payment_status }}</p>
+
+    <form id="paymentForm" action="{% url 'home' %}" method="post">
+        {% csrf_token %} <!-- Include CSRF token -->
+        <!-- Submit button -->
+        <button type="submit" id="submitPayment" class="btn btn-primary mt-3">Done</button>
+    </form>
+    <!-- You can display additional information or actions here based on the payment status -->
+</body>
+</html>
+{% endblock content %}

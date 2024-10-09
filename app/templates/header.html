@@ -1,0 +1,145 @@
+{% load static %}
+<header class="bg-light fixed-top" data-fixed-element>
+    <div class="navbar navbar-expand-lg navbar-light py-0" style="background-color: #197149;">
+        <div class="container-fluid">
+            <a class="navbar-brand col-lg-2" href="{% url 'home'%}">
+                <h4 style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #fff;">
+                    <span><img src="{% static 'img/grocery/slider/logo.png' %}" alt="Image" style="height:30px;">
+                    </span>
+                    CHIPTRON .
+                </h4>
+            </a>
+            <div class="container">
+                <div class="row justify-content-start page-wrapper">
+                    <div class="col-md-auto">
+                        <form action="{% url 'store' %}" method="GET" class="input-group px-3" id="searchForm">
+                            <div class="input-group">
+                                <span class="input-group-text" id="button-addon2">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Search for products" aria-label="Search" aria-describedby="button-addon2" name="q" id="searchInput" value="{{ search_query }}">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    $('#button-addon2').click(function() {
+                        $('#searchForm').submit();
+                    });
+                });
+            </script> 
+            <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav">
+                    <i class="fa-solid text-white fa-bars"></i>
+                </button>
+            
+                {% if user.is_authenticated %}
+                <style>
+                    @keyframes pulse {
+                        0% { transform: scale(0.9); }
+                        50% { transform: scale(1); }
+                        100% { transform: scale(0.9); }
+                    }
+                
+                    .navbar-tool-icon-box {
+                        animation: pulse 6s infinite alternate;
+                    }
+                </style>
+                <div class="navbar-tool me-3">
+                    <a class="navbar-tool-icon-box bg-white" href="{% url 'cart' %}" style="width: 42px; height: 42px;"> <!-- Adjust the width and height size as needed -->
+                        <span class="navbar-tool-label text-white">{{ cart_count }}</span>
+                        <i class="navbar-tool-icon ci-cart fs-7"></i>
+                    </a>
+                </div>
+                <div class="navbar-tool">
+                    <a class="navbar-tool-icon-box bg-white" href="{% url 'cart' %}" style="width: 42px; height: 42px;"> <!-- Adjust the width and height size as needed -->
+                        <span class="navbar-tool-label text-white">{{ cart_count }}</span>
+                        <i class="fa-regular fa-bell"></i>
+                    </a>
+                </div>
+                
+
+
+                <li class="dropdown ">
+                    <a class="nav-link nav-profile d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        {% if request.user.is_authenticated %}
+                        <div class="profile-picture-container">
+                            {% if request.user.userprofile.profile_pic %}
+                            <img src="{{ request.user.userprofile.profile_pic.url }}" alt="Profile Photo" class="rounded-circle" style="width: 42px; height: 42px;"> <!-- Adjust the width and height as needed -->
+                            {% else %}
+                            <h4 class="fa-solid fa-circle-user pull"></h4>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="background-color: #197149;">
+                        <div class="navbar">
+                            <span class="text-white text-center px-5">{{ request.user.username }}</span>
+                        </div>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-white" href="{% url 'dashbord' %}">
+                                <i class="p-2 fa-regular fa-user"></i><span class="align-self-center">My Profile</span>
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-white" href="users-profile.html">
+                                <i class="p-2 fa-solid fa-gear"></i><span class="align-self-center">Account Settings</span>
+                            </a>
+                        </li> -->
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        {% if user.is_authenticated %}
+                        {% if user.profile.user_type == 'management' %}
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-white" href="{% url 'addproduct' %}">
+                                <i class="p-2 fa-solid fa-plus"></i><span class="align-self-center">Add Product</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-white" href="pages-faq.html">
+                                <i class="p-2 fa-solid fa-info"></i><span class="align-self-center">Need Help?</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        {% if request.user.is_authenticated %}
+                        <a class="dropdown-item d-flex align-items-center text-white" href="{% url 'logout' %}">
+                            <i class="p-2 fa-solid fa-arrow-right-from-bracket"></i><span class="align-self-center">Logout</span>
+                        </a>
+                        {% else %}
+                        <a class="dropdown-item d-flex align-items-center text-white" href="{% url 'login' %}">
+                            <span>Login</span>
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center text-white" href="{% url 'register' %}">
+                            <span>Register</span>
+                        </a>
+                        {% endif %}
+                    </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
+                {% endif %}
+                {% if user.is_authenticated %}
+                {%else%}
+                <a class="navbar-tool ms-1 ms-lg-0 me-n1 me-lg-2" href="{%url 'login'%}">
+                    <div class="navbar-tool-icon-box"><i class="text-white navbar-tool-icon ci-user"></i></div>
+                    <div class="navbar-tool-text text-white ms-n3"><small class="text-white">Hello, Sign in</small>your Account</div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>

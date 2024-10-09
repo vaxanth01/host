@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <section">
+        <div class="container">
+            <div class="row">
+               
+                <div>
+                    <article class="card">
+                        <header class="card-header">
+                            <strong class="d-inline-block mr-3">Add Member</strong>
+                        </header>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="py-2">
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.first_name.label_tag }}
+                                            {{ form.first_name }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.last_name.label_tag }}
+                                            {{ form.last_name }}
+                                        </div>
+                                    </div>
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.email.label_tag }}
+                                            {{ form.email }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="id_user">User:</label>
+                                            {{ form.user }}
+                                        </div>
+                                    </div>
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.phone_number.label_tag }}
+                                            {{ form.phone_number }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.country.label_tag }}
+                                            {{ form.country }}
+                                        </div>
+                                    </div>
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.language.label_tag }}
+                                            {{ form.language }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.user_type.label_tag }}
+                                            {{ form.user_type }}
+                                        </div>
+                                    </div>
+                                    <div class="row py-2 align-items-center justify-content-end">
+                                        <div class="col-md-6">
+                                            <button type="submit" class="btn btn-primary">Add Member</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <li class="nav-item px-3 pb-2" role="presentation">
+        <a href="{% url 'checkout' %}" ><i class="fa-solid fa-arrow-left"></i></a></i>
+    </li>
+
+
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="text-uppercase px-5 p-3">Payment Methods</div>
+                    <div class="payment-method">
+                        <div id="paymentAccordion">
+                            <!-- Credit/Debit Card -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#cardCollapse" aria-expanded="false" aria-controls="cardCollapse">
+                                            <i class="fas fa-credit-card"></i> Credit/Debit Card
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div id="cardCollapse" class="collapse" aria-labelledby="cardHeading" data-parent="#paymentAccordion">
+                                    <div class="card-body">
+                                        <form class="">
+                                            <div class="form-group text-center">
+                                                <div class="form-group col-md-6">
+                                                <label for="cardNumber">Card Number</label>
+                                                <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9101 1121" required>
+                                            </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="expiryDate">Expiry Date</label>
+                                                    <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY" required>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="cvv">CVV</label>
+                                                    <input type="text" id="cvv" class="form-control" placeholder="123" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cardHolderName">Cardholder Name</label>
+                                                <input type="text" id="cardHolderName" class="form-control" placeholder="John Doe" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary btn-block">Submit Payment</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        
+
+                            <!-- Net Banking -->
+                            <div class="card">
+                                <div class="card-header" id="netbankingHeading">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#netbankingCollapse" aria-expanded="false" aria-controls="netbankingCollapse">
+                                            <i class="fas fa-university"></i> Net Banking
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="netbankingCollapse" class="collapse" aria-labelledby="netbankingHeading" data-parent="#paymentAccordion">
+                                    <div class="card-body">
+                                        <!-- Dropdown/select menu for bank selection -->
+                                        <select name="bank" class="form-control mb-3">
+                                            <option value="bank1">Indian Bank</option>
+                                            <option value="bank2"> State Bank</option>
+                                            <option value="bank2"> KVB Bank</option>
+                                            <!-- Add more bank options as needed -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- UPI -->
+                            <div class="card">
+                                <div class="card-header" id="upiHeading">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upiCollapse" aria-expanded="false" aria-controls="upiCollapse">
+                                            <i class="fas fa-mobile-alt"></i> UPI
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="upiCollapse" class="collapse" aria-labelledby="upiHeading" data-parent="#paymentAccordion">
+                                    <div class="card-body">
+                                        <!-- Google Pay -->
+                                        <div class="upi-option mb-2">
+                                            <label>
+                                                <input type="radio" name="upiMethod" value="google_pay">
+                                                <i class="fab fa-google-pay"></i> Google Pay
+                                            </label>
+                                        </div>
+                                        <!-- PhonePe -->
+                                        <div class="upi-option mb-2">
+                                            <label>
+                                                <input type="radio" name="upiMethod" value="phonepe">
+                                                <i class="fab fa-phonepe"></i> PhonePe
+                                            </label>
+                                        </div>
+                                        <!-- Paytm -->
+                                        <div class="upi-option mb-2">
+                                            <label>
+                                                <input type="radio" name="upiMethod" value="paytm">
+                                                <i class="fab fa-paytm"></i> Paytm
+                                            </label>
+                                        </div>
+                                        <!-- IMPS -->
+                                        <div class="upi-option mb-2">
+                                            <label>
+                                                <input type="radio" name="upiMethod" value="imps">
+                                                <i class="fas fa-exchange-alt"></i> IMPS
+                                            </label>
+                                        </div>
+                                        <!-- NEFT -->
+                                        <div class="upi-option mb-2">
+                                            <label>
+                                                <input type="radio" name="upiMethod" value="neft">
+                                                <i class="fas fa-university"></i> NEFT
+                                            </label>
+                                        </div>
+                                        <!-- Input field for UPI ID -->
+                                        <div class="form-group mt-3">
+                                            <input type="text" name="upiId" class="form-control" placeholder="Enter UPI ID" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <!-- Cash on Delivery -->
+                            <div class="card">
+                                <div class="card-header" id="codHeading">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#codCollapse" aria-expanded="false" aria-controls="codCollapse">
+                                            <i class="fas fa-money-bill-alt"></i> Cash On Delivery
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="codCollapse" class="collapse" aria-labelledby="codHeading" data-parent="#paymentAccordion">
+                                    <div class="card-body">
+                                        <p>No additional details required for Cash On Delivery</p>
+                                        <button onclick="confirmCOD()" class="btn btn-primary">Confirm Cash On Delivery</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header" id="creditbussinessHeading">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#creditbussinessCollapse" aria-expanded="false" aria-controls="creditbussinessCollapse">
+                                            <i class="fa-regular fa-credit-card"></i> Bussiness Credit
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="creditbussinessCollapse" class="collapse" aria-labelledby="creditbussinessHeading" data-parent="#paymentAccordion">
+                                    <div class="card-body">
+                                        <form id="businessCreditForm">
+                                            <div class="mb-3">
+                                                <label for="numberOfDays" class="form-label">Number of Days</label>
+                                                <input type="number" class="form-control" id="numberOfDays" name="numberOfDays" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="creditPassword" class="form-label">Password</label>
+                                                <input type="password" class="form-control" id="creditPassword" name="creditPassword" required>
+                                            </div>
+                                            <button type="button" onclick="confirmcreditbussiness()" class="btn btn-primary">Confirm Bussiness Credit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                @media (min-width: 768px) {
+    .sticky-aside {
+    position: sticky;
+    top: 80px; /* Adjust the distance from the top as needed */
+    }
+    }
+            </style>
+            <aside class="col-lg-6">
+                <div class="card">
+                    <table class="table table-borderless table-shopping-cart">
+                        <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Product</th>
+                                <th scope="col" width="100" class="text-center">Quantity</th>
+                                <th scope="col" width="100" class="text-center">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cart_item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-block d-sm-flex text-center text-sm-start">
+                                        <img src="{{ cart_item.product.image.url }}" width="50" alt="Product" class="border border-accent me-3">
+                                        <span style="font-size: 14px;">{{ cart_item.product }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ cart_item.quantity }}</td>
+                                <td class="text-center">
+                                    <div class="fs-lg text-accent pt-2">Rs. ₹{{ cart_item.sub_total|floatformat:2 }}</div>
+                                    <small>Rs. ₹{{ cart_item.product.price|floatformat:2 }} each</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+    
+                    <div class="card-footer">
+                        <!-- Row to display Total Amount, Discount Amount, and Grand Total in the same line -->
+                        <div class="d-flex justify-content-between">
+                            <div class="dlist-align">
+                                <dt>Total Amount:</dt>
+                                <dd class="text-right text-dark b">
+                                    <strong>Rs. ₹{{ total|floatformat:2 }}</strong>
+                                </dd>
+                            </div>
+                            <div class="dlist-align">
+                                <dt>Price Discount Amount:</dt>
+                                <dd class="text-right text-dark">
+                                    Rs. ₹{{ discount_amount|floatformat:2 }} ({{ discount_percent|floatformat:0 }}%)
+                                </dd>
+                            </div>
+                            <div class="dlist-align">
+                                <dt>Grand Total:</dt>
+                                <dd class="text-right text-dark b">
+                                    <strong>Rs. ₹{{ grand_total|floatformat:2 }}</strong>
+                                </dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer mt-3">
+                        <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+                        </div>
+                </div>
+            </aside>    
+        </div>
+
+        <!-- Payment details form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="payment-form">
+                    <h>Enter Payment Details</h>
+                    <form id="paymentForm" action="{% url 'process_payment' %}" method="post">
+                        {% csrf_token %} <!-- Include CSRF token -->
+                        <!-- Submit button -->
+                        <button type="submit" id="submitPayment" class="btn btn-primary mt-3">Make Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Ensure only one accordion item is open at a time
+        $('#paymentAccordion .card-header button').click(function() {
+            $('#paymentAccordion .card').not($(this).parents('.card')).removeClass('show');
+        });
+
+        // Function to handle confirmation for Cash On Delivery
+        function confirmCOD() {
+            if (confirm("Are you sure you want to proceed with Cash On Delivery?")) {
+                // Proceed with further actions
+            } else {
+                // User canceled, do nothing or handle accordingly
+            }
+        }
+
+        // Handle form submission
+        $("#submitPayment").click(function() {
+            // Check if only one payment option is selected
+            if ($("input[name='paymentMethod']:checked").length === 1) {
+                // Submit form
+                $("#paymentForm").submit();
+            } else {
+                // Show error message or alert
+                alert("Please select one payment method.");
+            }
+        });
+    });
+</script>
+
+
+
+{% endblock content %}

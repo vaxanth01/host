@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<main class="offcanvas-enabled" style="padding-top: 8em;">
+
+    <section class="section-pagetop bg ps-lg-4 pe-lg-3 pt-4"">
+        <div class="container">
+
+            {% if request.GET.q %}
+            <h2 class="title-page">Search results for "{{request.GET.q}}".</h2>
+            {% elif request.GET.category %}
+            <h2 class="title-page">{{request.GET.category}}</h2>
+            {% else %}
+            <h2 class="title-page">Our Store</h2>
+            {% endif %}
+
+        </div>
+
+        <div class="container">
+
+            <header class="border-bottom mb-4 pb-3">
+                <div class="form-inline">
+                    <span class="mr-md-auto">{{ products_count }} Items found </span>
+                </div>
+            </header>
+        
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-3">
+                    <div class="card product-card card-static mb-3">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip"
+                            data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button>
+                        <a class="card-img-top d-block overflow-hidden"
+                            href="{% url 'product-detail' product.id %}">
+                            <img src="{{ product.image.url }}" alt="Product">
+                        </a>
+                        <div class="card-body py-3">
+                            <a class="product-meta d-block fs-xs pb-1"
+                                href="#">{{ product.category.category_name }}</a>
+                            <h3 class="product-title fs-sm text-truncate ">
+                                <a href="{% url 'product-detail' product.id %}">{{ product.product_name }}</a>
+                            </h3>
+                            <div class="product-price">
+                                <span class="text-accent">Price: Rs. ₹ {{ product.price }}</span>
+                                {% if product.discount %} <br>  
+                                <span class="text-danger ml-2">Discount: {{ product.discount }}%</span>
+                                
+                                {% endif %}
+                            </div>
+                            <div class="discount-types mb-4">
+                                <span class="text-info"></span>
+                                {% if product.discount_types.all %}
+                                {% for discount_type in product.discount_types.all %}
+                                <span class="text-success">{{ discount_type.name }} ,</span>
+                                {% endfor %}
+                                {% else %}
+                                <span class="sp" style="visibility: hidden;">No discounts available for this product</span>
+
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="product-floating-btn">
+                            <a href="{% url 'add-cart' product.id %}" class="btn btn-primary btn btn-sm">+<i
+                                    class="ci-cart fs-base ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        
+        </div>
+        
+        </div>
+        
+    </section>
+
+</main>
+
+{% endblock content %}

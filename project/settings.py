@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-=rnne%4461j&ezm)e4-5#^bsw0=i&l^3x5+w7uq%oo9a_$7%7i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+# ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Ecommerce',
+    'accounts',
+    'cart',
+    'orders',
+    'app',
+    'store',
+    'category',
+    'addproduct',
 ]
 
 MIDDLEWARE = [

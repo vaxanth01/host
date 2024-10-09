@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <section>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <article class="card">
+                        <header class="card-header">
+                            <strong class="d-inline-block mr-3">Add Product</strong>
+                        </header>
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="py-2">
+                                    <!-- Product Name and Slug -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.product_name.label_tag }}
+                                            {{ form.product_name }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.slug.label_tag }}
+                                            {{ form.slug }}
+                                        </div>
+                                    </div>
+                                    <!-- Description -->
+                                    <div class="row py-2">
+                                        <div class="col-md-12">
+                                            {{ form.description.label_tag }}
+                                            {{ form.description }}
+                                        </div>
+                                    </div>
+                                    <!-- Price and MRP -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.price.label_tag }}
+                                            {{ form.price }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.MRP.label_tag }}
+                                            {{ form.MRP }}
+                                        </div>
+                                    </div>
+                                    <!-- Image and Availability -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.image.label_tag }}
+                                            {{ form.image }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.is_available }}
+                                            {{ form.is_available.label_tag }}
+                                        </div>
+                                    </div>
+                                    <!-- Category and UOM -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.category.label_tag }}
+                                            {{ form.category }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.uom.label_tag }}
+                                            {{ form.uom }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.stock.label_tag }}
+                                            {{ form.stock }}
+                                        </div>
+                                    </div>
+                                    <!-- Weight and Abbreviation -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.weight.label_tag }}
+                                            {{ form.weight }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.abbreviation.label_tag }}
+                                            {{ form.abbreviation }}
+                                        </div>
+                                    </div>
+                                    <!-- Discount Types -->
+                                    <div class="row py-2">
+                                        <div class="col-md-12">
+                                            {{ form.discount_types.label_tag }}
+                                            {{ form.discount_types }}
+                                        </div>
+                                    </div>
+                                    <!-- Work -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.work.label_tag }}
+                                            {{ form.work }}
+                                        </div>
+                                    </div>
+                                    <!-- Taxes (SGST, CGST, IGST, CESS) -->
+                                    <div class="row py-2">
+                                        <div class="col-md-3">
+                                            {{ form.SGST.label_tag }}
+                                            {{ form.SGST }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{ form.CGST.label_tag }}
+                                            {{ form.CGST }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{ form.IGST.label_tag }}
+                                            {{ form.IGST }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{ form.CESS.label_tag }}
+                                            {{ form.CESS }}
+                                        </div>
+                                    </div>
+                                    <!-- Special Cess and HSN Number -->
+                                    <div class="row py-2">
+                                        <div class="col-md-6">
+                                            {{ form.special_cess.label_tag }}
+                                            {{ form.special_cess }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.HSN_NUMBER.label_tag }}
+                                            {{ form.HSN_NUMBER }}
+                                        </div>
+                                    </div>
+                                    <div class="navbar-tool mt-4">
+                                        <a href="{% url 'addCategory' %}">Add Category</a>
+                                    </div>
+                                    <div class="row py-2 align-items-center justify-content-end">
+                                        <div class="col-md-6">
+                                            <button type="submit" class="btn btn-primary">Add Product</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
